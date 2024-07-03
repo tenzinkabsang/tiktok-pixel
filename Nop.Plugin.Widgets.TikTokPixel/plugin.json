@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widgets",
+  "FriendlyName": "TikTok Pixel",
+  "SystemName": "Widgets.TikTokPixel",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "Zen Software Solution",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widgets.TikTokPixel.dll",
+  "Description": "This plugin integrates with Tiktok Pixel. It allows you to track visitor activity on your website."
+}

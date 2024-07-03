@@ -1,0 +1,112 @@
+﻿@model ConfigurationModel
+
+@{
+    Layout = "_ConfigurePlugin";
+    var hideSearchBlock = Model.TikTokPixelSearchModel.HideSearchBlock;
+}
+
+<div class="content">
+    <div class="form-horizontal">
+        <p>
+            The TikTok pixel is a snippet of JavaScript code that allows you to track visitor activity on your website. 
+            It works by loading a small library of functions which you can use whenever a site visitor takes an action (called an <strong>event</strong>) that you want to track (called a <strong>conversion</strong>). 
+            Tracked conversions appear in the <a href="https://business.tiktok.com/manage/overview" target="_blank">Tiktok Analytics</a> dashboard, where they can be used to measure the effectiveness of your ads, to define custom audiences for ad targeting, for dynamic ads campaigns, and to analyze the effectiveness of your website's conversion funnels.
+        </p>
+        <div class="cards-group">
+            @if (!Model.HideList && !Model.TikTokPixelSearchModel.HideStoresList)
+            {
+                <div class="card card-default card-search">
+                    <div class="card-body">
+                        <div class="row search-row @(!Model.TikTokPixelSearchModel.HideSearchBlock ? "opened" : "")" data-hideAttribute="@TikTokPixelDefaults.HideSearchBlockAttribute">
+                            <div class="search-text">@T("Admin.Common.Search")</div>
+                            <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                            <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+                        </div>
+
+                        <div class="search-body @(Model.TikTokPixelSearchModel.HideSearchBlock ? "closed" : "")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row" @(Model.TikTokPixelSearchModel.HideStoresList ? Html.Raw("style=\"display:none\"") : null)>
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="@Model.TikTokPixelSearchModel.StoreId" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-select asp-for="@Model.TikTokPixelSearchModel.StoreId" asp-items="@Model.TikTokPixelSearchModel.AvailableStores" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-8 offset-md-4">
+                                            <button type="button" id="search" class="btn btn-primary btn-search">
+                                                <i class="fas fa-search"></i>
+                                                @T("Admin.Common.Search")
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card card-default">
+                @if (!Model.HideList)
+                {
+                    <div class="card-body">
+                        @await Html.PartialAsync("Table", new DataTablesModel
+                        {
+                            Name = "grid",
+                            UrlRead = new DataUrl("List", "TikTokPixel", null),
+                            SearchButtonId = "search",
+                            Length = Model.TikTokPixelSearchModel.PageSize,
+                            LengthMenu = Model.TikTokPixelSearchModel.AvailablePageSizes,
+                            Filters = new List<FilterParameter>
+                            {
+                                new FilterParameter(nameof(TikTokPixelSearchModel.StoreId), nameof(TikTokPixelSearchModel))
+                            },
+                            ColumnCollection = new List<ColumnProperty>
+                            {
+                                new ColumnProperty(nameof(TikTokPixelModel.PixelId))
+                                {
+                                    Title = T("Plugins.Widgets.TikTokPixel.Configuration.Fields.PixelId").Text
+                                },
+                                new ColumnProperty(nameof(TikTokPixelModel.StoreName))
+                                {
+                                    Title = T("Plugins.Widgets.TikTokPixel.Configuration.Fields.Store").Text,
+                                    Width = "200",
+                                    Visible = (await storeService.GetAllStoresAsync()).Count > 1
+                                },
+                                new ColumnProperty(nameof(TikTokPixelModel.PixelScriptEnabled))
+                                {
+                                    Title = T("Plugins.Widgets.TikTokPixel.Configuration.Fields.PixelScriptEnabled").Text,
+                                    Width = "100",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderBoolean()
+                                },
+                                new ColumnProperty(nameof(TikTokPixelModel.ConversionsApiEnabled))
+                                {
+                                    Title = T("Plugins.Widgets.TikTokPixel.Configuration.Fields.ConversionsApiEnabled").Text,
+                                    Width = "100",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderBoolean()
+                                },
+                                new ColumnProperty(nameof(TikTokPixelModel.Id))
+                                {
+                                    Title = T("Admin.Common.Edit").Text,
+                                    Width = "100",
+                                    Render = new RenderButtonEdit(new DataUrl("~/Admin/TikTokPixel/Edit/"))
+                                }
+                            }
+                        })
+                    </div>
+                }
+                <div class="card-footer">
+                    <a asp-controller="TikTokPixel" asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus-square"></i>
+                        @T("Admin.Common.AddNew") @T("Plugins.Widgets.TikTokPixel.Configuration")
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
